@@ -17,7 +17,7 @@ const account1 = {
     '2022-06-09T10:51:36.790Z',
   ],
   currency: 'EUR',
-  locale: 'pt-PT', // de-DE
+  locale: 'pt-PT', 
 };
 
 const account2 = {
@@ -62,8 +62,6 @@ const account3 = {
 
 const accounts = [account1, account2,account3];
 
-/////////////////////////////////////////////////
-// Elements
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
@@ -88,9 +86,6 @@ const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
-
-/////////////////////////////////////////////////
-// Functions
 
 const formatMovementDate = function (date, locate) {
   const date1 = new Date(date);
@@ -169,7 +164,6 @@ const calcDisplaySummary = function (acc) {
     .filter(mov => mov > 0)
     .map(deposit => (deposit * acc.interestRate) / 100)
     .filter((int, i, arr) => {
-      // console.log(arr);
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
@@ -188,13 +182,10 @@ const createUsernames = function (accs) {
 createUsernames(accounts);
 
 const updateUI = function (acc) {
-  // Display movements
   displayMovements(acc);
 
-  // Display balance
   calcDisplayBalance(acc);
 
-  // Display summary
   calcDisplaySummary(acc);
 };
 
@@ -215,14 +206,11 @@ const startLogOutTimer=function(){
   return timer;
 };
 
-///////////////////////////////////////
-// Event handlers
 let currentAccount,timer;
 
 let now = new Date();
 
 btnLogin.addEventListener('click', function (e) {
-  // Prevent form from submitting
   e.preventDefault();
 
   currentAccount = accounts.find(
@@ -230,13 +218,11 @@ btnLogin.addEventListener('click', function (e) {
   );
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
 
-    // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
 
@@ -246,7 +232,6 @@ btnLogin.addEventListener('click', function (e) {
 
     timer=startLogOutTimer();
 
-    // Update UI
     updateUI(currentAccount);
     const [date, month, year, hour, min] = [
       `${now.getDate()}`.padStart(2, 0),
@@ -265,7 +250,6 @@ btnLogin.addEventListener('click', function (e) {
       weekday: 'long',
     };
 
-    // labelDate.textContent = `${date}/${month}/${year}, ${hour}:${min}`;
     setInterval(function(){
       now=new Date();
       labelDate.textContent = new Intl.DateTimeFormat(
@@ -291,14 +275,12 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.balance >= amount &&
     receiverAcc?.username !== currentAccount.username
   ) {
-    // Doing the transfer
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
     currentAccount.movementsDates.push(new Date().toISOString());
     receiverAcc.movementsDates.push(new Date().toISOString());
 
-    // Update UI
     updateUI(currentAccount);
     if (timer) {
       clearInterval(timer);
@@ -314,7 +296,6 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
     setTimeout(function () {
       currentAccount.movements.push(amount);
 
@@ -343,12 +324,8 @@ btnClose.addEventListener('click', function (e) {
       acc => acc.username === currentAccount.username
     );
     console.log(index);
-    // .indexOf(23)
-
-    // Delete account
     accounts.splice(index, 1);
 
-    // Hide UI
     containerApp.style.opacity = 0;
   }
 
@@ -366,6 +343,3 @@ btnSort.addEventListener('click', function (e) {
   displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
